@@ -1,0 +1,19 @@
+name: currency_formatter
+description: A package to easily format money.
+version: 1.0.0
+homepage: https://github.com/roman910dev/currency_formatter
+authors:
+  - Román Via-Dufresne Saus <roman910dev@gmail.com>
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_money_formatter: ^0.8.3
+  intl: ^0.15.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
