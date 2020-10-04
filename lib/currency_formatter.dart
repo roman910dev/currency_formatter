@@ -41,9 +41,10 @@ class CurrencyFormatter {
       print('${majorSymbols.values.elementAt(i)}\t$symbol');
       if (majorSymbols.values.elementAt(i) == symbol) return majors.values.elementAt(i);
     }
+    return null;
   }
 
-  static final Map<String, CurrencyFormatterSettings> majors = {
+  final Map<String, CurrencyFormatterSettings> majors = {
     'usd': usd,
     'eur': eur,
     'jpy': jpy,
@@ -55,7 +56,7 @@ class CurrencyFormatter {
     'inr': inr,
     'rub': rub,
     'zar': zar,
-    'try': try_,
+    'try': tryx,
     'pln': pln,
     'thb': thb,
     'idr': idr,
@@ -67,7 +68,7 @@ class CurrencyFormatter {
     'ron': ron
   };
 
-  static final Map<String, String> majorSymbols = {
+  final Map<String, String> majorSymbols = {
     'usd': '\$',
     'eur': '€',
     'jpy': '¥',
@@ -148,7 +149,7 @@ class CurrencyFormatter {
       symbolSide: SymbolSide.left
   );
 
-  static final CurrencyFormatterSettings try_ = CurrencyFormatterSettings(
+  static final CurrencyFormatterSettings tryx = CurrencyFormatterSettings(
       symbol: '₺',
       symbolSide: SymbolSide.left
   );

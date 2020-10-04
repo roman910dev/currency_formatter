@@ -9,11 +9,11 @@ A package to easily format money. It uses
 To set how a `double` will be formatted, create a `CurrencyFormatterSettings`:
 
 ```dart
-CurrencyFormatterSettings settings = CurrencyFormatterSettings(
+CurrencyFormatterSettings euroSettings = CurrencyFormatterSettings(
   symbol:'€',
   symbolSide: SymbolSide.left,
   thousandSeparator: '.',
-  decimalSeparator: '.',
+  decimalSeparator: ',',
 );
 ```
 
@@ -38,10 +38,10 @@ They are listed in the `CurrencyFormatter.majors` variable and their symbols in
 which do exactly the same:
 
 ```dart
-String inUSD = cf.format(amount, cf.usd); // $ 1,910.93
-String inRUB = cf.format(amount, cf.majors['rub']); // 1.910,93 ₽
+String inUSD = cf.format(amount, CurrencyFormatter.usd); // $ 1,910.93
+  String inRUB = cf.format(amount, cf.majors['rub']); // 1.910,93 ₽
 
-String jpySymbol = cf.majorSymbols['jpy']; // ¥
+  String jpySymbol = cf.majorSymbols['jpy']; // ¥
 ```
 
 In Flutter, you can get the default `CurrencyFormatterSettings ` according to the device
@@ -55,5 +55,5 @@ You can get a `CurrencyFormatterSettings` from a currency symbol (if it is in
 `CurrencyFormatter.majors`) with `CurrencyFormatter.getFromSymbol()`:
 
 ```dart
-String fromSymbol = cf.format(amount, cur.getFromSymbol('£')); // £ 1,910.35
+String fromSymbol = cf.format(amount, cf.getFromSymbol('£')); // £ 1,910.35
 ```
