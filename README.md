@@ -1,8 +1,6 @@
 # currency_formatter
 
-A package to easily format money. It uses
- [flutter_money_formatter](https://pub.dev/packages/flutter_money_formatter) and 
- simplifies it.
+A package to easily format money.
 
 ## Getting Started
 

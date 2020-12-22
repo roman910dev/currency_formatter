@@ -1,39 +1,43 @@
 library currency_formatter;
-import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
+import 'dart:math';
 
 class CurrencyFormatter {
 
   String format(amount, CurrencyFormatterSettings settings, {bool compact = false, int decimal = 2}) {
     amount = double.parse('$amount');
-    MoneyFormatterSettings formatterSettings = MoneyFormatterSettings(
-        symbol: settings.symbol,
-        thousandSeparator: settings.thousandSeparator,
-        decimalSeparator: settings.decimalSeparator,
-        fractionDigits: amount.round() == amount ? 0 : decimal
-    );
-    String returnable;
-    MoneyFormatterOutput formatter = FlutterMoneyFormatter(amount: amount, settings: formatterSettings).output;
+    String number;
+    String letter = '';
+
+    if (compact) {
+      final Map<num, String> letters = {
+        pow(10,9): 'B',
+        pow(10,6): 'M',
+        pow(10,3): 'K'
+      };
+
+      for (int i = 0; i < letters.length; i++) {
+        if (amount.abs() >= letters.keys.elementAt(i)) {
+          letter = letters.values.elementAt(i);
+          amount /= letters.keys.elementAt(i);
+          break;
+        }
+        number = amount.toStringAsPrecision(3)+letter;
+      }
+    } else {
+      number = amount.toStringAsFixed(decimal);
+    }
+    number = number.replaceAll('.', settings.decimalSeparator);
     switch (settings.symbolSide) {
       case SymbolSide.left:
-        returnable = compact ? formatter.compactSymbolOnLeft : formatter.symbolOnLeft;
-        break;
+        return '${settings.symbol} $number$letter';
       case SymbolSide.right:
-        returnable = compact ? formatter.compactSymbolOnRight : formatter.symbolOnRight;
-        break;
-      case SymbolSide.none:
-        returnable = compact ? formatter.compactNonSymbol : formatter.nonSymbol;
+        return '$number$letter ${settings.symbol}';
+      default:
+        return '$number$letter';
     }
-    if (compact && (amount < 0 || settings.decimalSeparator != '.')) {
-      List<String> spl = returnable.split(' ');
-      int idx = settings.symbolSide == SymbolSide.left ? 1 : 0;
-      if (amount < 0) spl[idx] = '-' + spl[idx].replaceAll('-', '');
-      if (settings.decimalSeparator != '.') spl[idx] = spl[idx].replaceAll('.', settings.decimalSeparator);
-      returnable = spl.join(' ');
-    }
-    return returnable;
   }
 
   CurrencyFormatterSettings getFromSymbol(String symbol) {
