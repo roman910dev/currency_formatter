@@ -17,11 +17,11 @@ void main() {
   String threeDecimal = cf.format(amount, euroSettings, decimal: 3);      // 1.910,945 €
 
   String inUSD = cf.format(amount, CurrencyFormatter.usd);                // $ 1,910.93
-  String inRUB = cf.format(amount, cf.majors['rub']);                     // 1.910,93 ₽
+  String inRUB = cf.format(amount, cf.majors['rub']!);                     // 1.910,93 ₽
 
-  String jpySymbol = cf.majorSymbols['jpy'];                              // ¥
+  String jpySymbol = cf.majorSymbols['jpy']!;                              // ¥
 
-  String inSystemCurrency = cf.format(amount, cf.getLocal());
+  String inSystemCurrency = cf.format(amount, cf.getLocal()!);
 
-  String fromSymbol = cf.format(amount, cf.getFromSymbol('£'));          // £ 1,910.35
+  String fromSymbol = cf.format(amount, cf.getFromSymbol('£')!);          // £ 1,910.35
 }
