@@ -37,9 +37,9 @@ which do exactly the same:
 
 ```dart
 String inUSD = cf.format(amount, CurrencyFormatter.usd); // $ 1,910.93
-  String inRUB = cf.format(amount, cf.majors['rub']); // 1.910,93 ₽
+String inRUB = cf.format(amount, cf.majors['rub']); // 1.910,93 ₽
 
-  String jpySymbol = cf.majorSymbols['jpy']; // ¥
+String jpySymbol = cf.majorSymbols['jpy']; // ¥
 ```
 
 In Flutter, you can get the default `CurrencyFormatterSettings ` according to the device

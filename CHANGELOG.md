@@ -1,3 +1,8 @@
+## [1.1.1] - 2021-08-25
+
+Fixed bug where thousandSeparator would not show.
+Fixed bug where with compact formatting.
+
 ## [1.1.0] - 2020-12-22
 
 Removed [flutter_money_formatter](https://pub.dev/packages/flutter_money_formatter) dependency. Now
