@@ -1,15 +1,15 @@
 name: currency_formatter
 description: A package to easily format money. It supports setting a custom currency symbol and format, using some of the inbuilt ones for the main currencies or using the system one.
-version: 1.1.1
+version: 1.2.0
 homepage: https://github.com/roman910dev/currency_formatter
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  intl: any
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

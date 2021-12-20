@@ -37,21 +37,21 @@ which do exactly the same:
 
 ```dart
 String inUSD = cf.format(amount, CurrencyFormatter.usd); // $ 1,910.93
-String inRUB = cf.format(amount, cf.majors['rub']); // 1.910,93 ₽
+String inRUB = cf.format(amount, cf.majors['rub']!); // 1.910,93 ₽
 
-String jpySymbol = cf.majorSymbols['jpy']; // ¥
+String jpySymbol = cf.majorSymbols['jpy']!; // ¥
 ```
 
 In Flutter, you can get the default `CurrencyFormatterSettings ` according to the device
 language using `cf.getLocal()`:
 
 ```dart
-String inSystemCurrency = cf.format(amount, cf.getLocal());
+String inSystemCurrency = cf.format(amount, cf.getLocal() ?? cf.majors['usd']!);
 ```
 
 You can get a `CurrencyFormatterSettings` from a currency symbol (if it is in
 `CurrencyFormatter.majors`) with `CurrencyFormatter.getFromSymbol()`:
 
 ```dart
-String fromSymbol = cf.format(amount, cf.getFromSymbol('£')); // £ 1,910.35
+String fromSymbol = cf.format(amount, cf.getFromSymbol('£')!); // £ 1,910.35
 ```

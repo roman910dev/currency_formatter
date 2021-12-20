@@ -1,3 +1,7 @@
+## [1.2.0] - 2021-11-27
+
+Migrated to sound null safety.
+
 ## [1.1.1] - 2021-08-25
 
 Fixed bug where thousandSeparator would not show.
