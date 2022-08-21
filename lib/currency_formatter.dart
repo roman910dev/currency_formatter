@@ -1,10 +1,16 @@
 library currency_formatter;
 
 import 'package:intl/intl.dart';
-import 'dart:io' show Platform;
-import 'dart:math';
+import 'package:universal_io/io.dart' show Platform;
 
-class CurrencyFormatter {
+abstract class CurrencyFormatter {
+  static final Map<num, String> _letters = {
+    1000000000000: 'T',
+    1000000000: 'B',
+    1000000: 'M',
+    1000: 'K'
+  };
+
   /// Format [amount] using the [settings] of a currency.
   ///
   /// If [compact] is `true` the compact form will be used. e.g. `'$ 1.23K'` instead of `'$ 1,230'`.
@@ -17,7 +23,7 @@ class CurrencyFormatter {
   ///
   /// If [enforceDecimals] is set to `true`, decimals will be shown even if it is an integer.
   /// e.g. `'$ 5.00'` instead of `'$ 5'`.
-  String format(amount, CurrencyFormatterSettings settings,
+  static String format(amount, CurrencyFormatterSettings settings,
       {bool compact = false,
       int decimal = 2,
       showThousandSeparator = true,
@@ -27,17 +33,10 @@ class CurrencyFormatter {
     String letter = '';
 
     if (compact) {
-      final Map<num, String> letters = {
-        pow(10, 12): 'T',
-        pow(10, 9): 'B',
-        pow(10, 6): 'M',
-        pow(10, 3): 'K'
-      };
-
-      for (int i = 0; i < letters.length; i++) {
-        if (amount.abs() >= letters.keys.elementAt(i)) {
-          letter = letters.values.elementAt(i);
-          amount /= letters.keys.elementAt(i);
+      for (int i = 0; i < _letters.length; i++) {
+        if (amount.abs() >= _letters.keys.elementAt(i)) {
+          letter = _letters.values.elementAt(i);
+          amount /= _letters.keys.elementAt(i);
           break;
         }
       }
@@ -58,60 +57,74 @@ class CurrencyFormatter {
             : '';
         for (int i = 0; i < oldNum.length; i++) {
           number = oldNum[oldNum.length - i - 1] + number;
-          if ((i + 1) % 3 == 0 && i < oldNum.length - 1)
+          if ((i + 1) % 3 == 0 &&
+              i < oldNum.length - (oldNum.startsWith('-') ? 2 : 1))
             number = settings.thousandSeparator! + number;
         }
       }
     }
     switch (settings.symbolSide) {
       case SymbolSide.left:
-        return '${settings.symbol} $number$letter';
+        return '${settings.symbol}${settings.symbolSeparator}$number$letter';
       case SymbolSide.right:
-        return '$number$letter ${settings.symbol}';
+        return '$number$letter${settings.symbolSeparator}${settings.symbol}';
       default:
         return '$number$letter';
     }
   }
 
-  /// Get the [CurrencyFormatterSettings] of a currency using its symbol.
-  CurrencyFormatterSettings? getFromSymbol(String symbol) {
-    for (int i = 0; i < majorSymbols.length; i++) {
-      print('${majorSymbols.values.elementAt(i)}\t$symbol');
-      if (majorSymbols.values.elementAt(i) == symbol)
-        return majors.values.elementAt(i);
+  /// Parse a formatted string to a number.
+  static num parse(String input, CurrencyFormatterSettings settings) {
+    String txt = input
+        .replaceFirst(settings.thousandSeparator ?? '', '')
+        .replaceFirst(settings.decimalSeparator ?? '', '.')
+        .replaceFirst(settings.symbol, '')
+        .replaceFirst(settings.symbolSeparator, '')
+        .trim();
+
+    String _letter = '';
+    for (String letter in _letters.values) {
+      if (txt.endsWith(letter)) {
+        txt = txt.replaceFirst(letter, '');
+        _letter = letter;
+        break;
+      }
     }
-    return null;
+
+    return num.parse(txt) *
+        _letters.keys
+            .firstWhere((e) => _letters[e] == _letter, orElse: () => 1);
   }
 
   /// Map that contains the [CurrencyFormatterSettings] from major currencies.
   /// They can be accessed using their abbreviation. e.g. `majors['usd']`.
-  final Map<String, CurrencyFormatterSettings> majors = {
-    'usd': usd,
-    'eur': eur,
-    'jpy': jpy,
-    'gbp': gbp,
-    'chf': chf,
-    'cny': cny,
-    'sek': sek,
-    'krw': krw,
-    'inr': inr,
-    'rub': rub,
-    'zar': zar,
-    'try': tryx,
-    'pln': pln,
-    'thb': thb,
-    'idr': idr,
-    'huf': huf,
-    'czk': czk,
-    'ils': ils,
-    'php': php,
-    'myr': myr,
-    'ron': ron
+  static final Map<String, CurrencyFormatterSettings> majors = {
+    'usd': CurrencyFormatterSettings.usd,
+    'eur': CurrencyFormatterSettings.eur,
+    'jpy': CurrencyFormatterSettings.jpy,
+    'gbp': CurrencyFormatterSettings.gbp,
+    'chf': CurrencyFormatterSettings.chf,
+    'cny': CurrencyFormatterSettings.cny,
+    'sek': CurrencyFormatterSettings.sek,
+    'krw': CurrencyFormatterSettings.krw,
+    'inr': CurrencyFormatterSettings.inr,
+    'rub': CurrencyFormatterSettings.rub,
+    'zar': CurrencyFormatterSettings.zar,
+    'try': CurrencyFormatterSettings.tryx,
+    'pln': CurrencyFormatterSettings.pln,
+    'thb': CurrencyFormatterSettings.thb,
+    'idr': CurrencyFormatterSettings.idr,
+    'huf': CurrencyFormatterSettings.huf,
+    'czk': CurrencyFormatterSettings.czk,
+    'ils': CurrencyFormatterSettings.ils,
+    'php': CurrencyFormatterSettings.php,
+    'myr': CurrencyFormatterSettings.myr,
+    'ron': CurrencyFormatterSettings.ron
   };
 
   /// Map that contains the symbols from major currencies.
   /// They can be accessed using their abbreviation. e.g. `majorSymbols['usd']`.
-  final Map<String, String> majorSymbols = {
+  static const Map<String, String> majorSymbols = {
     'usd': '\$',
     'eur': '€',
     'jpy': '¥',
@@ -134,9 +147,67 @@ class CurrencyFormatter {
     'myr': 'RM',
     'ron': 'L'
   };
+}
+
+/// This class contains the formatting settings for a currency.
+class CurrencyFormatterSettings {
+  /// Symbol of the currency. e.g. '€'
+  String symbol;
+
+  /// Whether the symbol is shown before or after the money value, or if it is not shown at all.
+  /// e.g. $ 125 ([SymbolSide.left]) or 125 € ([SymbolSide.right]).
+  SymbolSide symbolSide;
+
+  /// Thousand separator. e.g. 1,000,000 (`','`) or 1.000.000 (`'.'`). It can be set to any desired [String].
+  /// It defaults to `','` for [SymbolSide.left] and to `'.'` for [SymbolSide.right].
+  String? thousandSeparator;
+
+  /// Decimal separator. e.g. 9.10 (`'.'`) or 9,10 (`','`). It can be set to any desired [String].
+  /// It defaults to `'.'` for [SymbolSide.left] and to `','` for [SymbolSide.right].
+  String? decimalSeparator;
+
+  /// Character(s) between the number and the currency symbol. e.g. $ 9.10 (`' '`) or $9.10 (`''`).
+  /// It defaults to a normal space (`' '`).
+  String symbolSeparator;
+
+  CurrencyFormatterSettings(
+      {required this.symbol,
+      this.symbolSide = SymbolSide.left,
+      this.thousandSeparator,
+      this.decimalSeparator,
+      this.symbolSeparator = ' '}) {
+    if (this.thousandSeparator == null)
+      this.thousandSeparator = this.symbolSide == SymbolSide.left ? ',' : '.';
+    if (this.decimalSeparator == null)
+      this.decimalSeparator = this.symbolSide == SymbolSide.left ? '.' : ',';
+  }
+
+  // Returns the same [CurrencyFormatterSettings] but with some changed parameters.
+  CurrencyFormatterSettings copyWith({
+    String? symbol,
+    SymbolSide? symbolSide,
+    String? thousandSeparator,
+    String? decimalSeparator,
+    String? symbolSeparator,
+  }) =>
+      CurrencyFormatterSettings(
+          symbol: symbol ?? this.symbol,
+          symbolSide: symbolSide ?? this.symbolSide,
+          thousandSeparator: thousandSeparator ?? this.thousandSeparator,
+          decimalSeparator: decimalSeparator ?? this.decimalSeparator,
+          symbolSeparator: symbolSeparator ?? this.symbolSeparator);
+
+  /// Get the [CurrencyFormatterSettings] of a currency using its symbol.
+  static CurrencyFormatterSettings? fromSymbol(String symbol) {
+    for (int i = 0; i < CurrencyFormatter.majorSymbols.length; i++) {
+      if (CurrencyFormatter.majorSymbols.values.elementAt(i) == symbol)
+        return CurrencyFormatter.majors.values.elementAt(i);
+    }
+    return null;
+  }
 
   /// Get the [CurrencyFormatterSettings] of the local currency.
-  CurrencyFormatterSettings? getLocal() => getFromSymbol(
+  static CurrencyFormatterSettings? get local => fromSymbol(
       NumberFormat.simpleCurrency(locale: Platform.localeName).currencySymbol);
 
   static final CurrencyFormatterSettings usd =
@@ -201,35 +272,6 @@ class CurrencyFormatter {
 
   static final CurrencyFormatterSettings ron =
       CurrencyFormatterSettings(symbol: 'L', symbolSide: SymbolSide.right);
-}
-
-/// This class contains the formatting settings for a currency.
-class CurrencyFormatterSettings {
-  /// Symbol of the currency. e.g. '€'
-  String symbol;
-
-  /// Whether the symbol is shown before or after the money value, or if it is not shown at all.
-  /// e.g. $ 125 ([SymbolSide.left]) or 125 € ([SymbolSide.right]).
-  SymbolSide symbolSide;
-
-  /// Thousand separator. e.g. 1,000,000 (`','`) or 1.000.000 (`'.'`). It can be set to any desired [String].
-  /// It defaults to `','` for [SymbolSide.left] and to `'.'` for [SymbolSide.right].
-  String? thousandSeparator;
-
-  /// Decimal separator. e.g. 9.10 (`'.'`) or 9,10 (`','`). It can be set to any desired [String].
-  /// It defaults to `'.'` for [SymbolSide.left] and to `','` for [SymbolSide.right].
-  String? decimalSeparator;
-
-  CurrencyFormatterSettings(
-      {required this.symbol,
-      this.symbolSide = SymbolSide.left,
-      this.thousandSeparator,
-      this.decimalSeparator}) {
-    if (this.thousandSeparator == null)
-      this.thousandSeparator = this.symbolSide == SymbolSide.left ? ',' : '.';
-    if (this.decimalSeparator == null)
-      this.decimalSeparator = this.symbolSide == SymbolSide.left ? '.' : ',';
-  }
 }
 
 /// Enumeration for the three possibilities when writing the currency symbol.

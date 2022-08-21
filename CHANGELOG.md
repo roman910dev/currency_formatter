@@ -1,11 +1,26 @@
+## [2.0.0] - 2022-08-21
+
+Major changes.
+- Changed dependency from `dart:io` to `universal:io` for better web support.
+- `CurrencyFormatter` is now an `abstract` class, so `format()` and `parse()` are `static` methods.
+- Included currencies can now be accessed from `CurrencyFormatterSettings`.
+- `CurrencyFormatterSettings` now accepts a `symbolSeparator` parameter.
+- `CurrencyFormatterSettings` can now be _modified_ using `copyWith()` method.
+- `CurrencyFormater().getLocal()` is now `CurrencyFormatterSettings.local`.
+
+## [1.2.1] - 2022-04-20
+
+Added `CurrencyFormatter().parse()`.
+Fixed a formatting bug with `thousandSeparator` for negative numbers.
+
 ## [1.2.0] - 2021-11-27
 
 Migrated to sound null safety.
 
 ## [1.1.1] - 2021-08-25
 
-Fixed bug where thousandSeparator would not show.
-Fixed bug where with compact formatting.
+Fixed bug where `thousandSeparator` would not show.
+Fixed bug where with `compact` formatting.
 
 ## [1.1.0] - 2020-12-22
 
