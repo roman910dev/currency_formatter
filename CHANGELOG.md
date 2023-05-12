@@ -1,6 +1,11 @@
+## [2.0.1] - 2023-05-12
+
+- Upgraded `intl` package to `^0.18.0` to enable support for Flutter 3.10.
+
 ## [2.0.0] - 2022-08-21
 
 Major changes.
+
 - Changed dependency from `dart:io` to `universal:io` for better web support.
 - `CurrencyFormatter` is now an `abstract` class, so `format()` and `parse()` are `static` methods.
 - Included currencies can now be accessed from `CurrencyFormatterSettings`.

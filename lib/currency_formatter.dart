@@ -23,11 +23,14 @@ abstract class CurrencyFormatter {
   ///
   /// If [enforceDecimals] is set to `true`, decimals will be shown even if it is an integer.
   /// e.g. `'$ 5.00'` instead of `'$ 5'`.
-  static String format(amount, CurrencyFormatterSettings settings,
-      {bool compact = false,
-      int decimal = 2,
-      showThousandSeparator = true,
-      enforceDecimals = false}) {
+  static String format(
+    amount,
+    CurrencyFormatterSettings settings, {
+    bool compact = false,
+    int decimal = 2,
+    showThousandSeparator = true,
+    enforceDecimals = false,
+  }) {
     amount = double.parse('$amount');
     late String number;
     String letter = '';
@@ -44,21 +47,18 @@ abstract class CurrencyFormatter {
       number = number.replaceAll('.', settings.decimalSeparator!);
     } else {
       number = amount.toStringAsFixed(decimal);
-      if (!enforceDecimals &&
-          double.parse(number) == double.parse(number).round()) {
+      if (!enforceDecimals && double.parse(number) == double.parse(number).round()) {
         number = double.parse(number).round().toString();
       }
       number = number.replaceAll('.', settings.decimalSeparator!);
       if (showThousandSeparator) {
         String oldNum = number.split(settings.decimalSeparator!)[0];
         number = number.contains(settings.decimalSeparator!)
-            ? settings.decimalSeparator! +
-                number.split(settings.decimalSeparator!)[1]
+            ? settings.decimalSeparator! + number.split(settings.decimalSeparator!)[1]
             : '';
         for (int i = 0; i < oldNum.length; i++) {
           number = oldNum[oldNum.length - i - 1] + number;
-          if ((i + 1) % 3 == 0 &&
-              i < oldNum.length - (oldNum.startsWith('-') ? 2 : 1))
+          if ((i + 1) % 3 == 0 && i < oldNum.length - (oldNum.startsWith('-') ? 2 : 1))
             number = settings.thousandSeparator! + number;
         }
       }
@@ -92,8 +92,7 @@ abstract class CurrencyFormatter {
     }
 
     return num.parse(txt) *
-        _letters.keys
-            .firstWhere((e) => _letters[e] == _letter, orElse: () => 1);
+        _letters.keys.firstWhere((e) => _letters[e] == _letter, orElse: () => 1);
   }
 
   /// Map that contains the [CurrencyFormatterSettings] from major currencies.
@@ -170,16 +169,15 @@ class CurrencyFormatterSettings {
   /// It defaults to a normal space (`' '`).
   String symbolSeparator;
 
-  CurrencyFormatterSettings(
-      {required this.symbol,
-      this.symbolSide = SymbolSide.left,
-      this.thousandSeparator,
-      this.decimalSeparator,
-      this.symbolSeparator = ' '}) {
-    if (this.thousandSeparator == null)
-      this.thousandSeparator = this.symbolSide == SymbolSide.left ? ',' : '.';
-    if (this.decimalSeparator == null)
-      this.decimalSeparator = this.symbolSide == SymbolSide.left ? '.' : ',';
+  CurrencyFormatterSettings({
+    required this.symbol,
+    this.symbolSide = SymbolSide.left,
+    this.thousandSeparator,
+    this.decimalSeparator,
+    this.symbolSeparator = ' ',
+  }) {
+    thousandSeparator ??= symbolSide == SymbolSide.left ? ',' : '.';
+    decimalSeparator ??= symbolSide == SymbolSide.left ? '.' : ',';
   }
 
   // Returns the same [CurrencyFormatterSettings] but with some changed parameters.
@@ -191,11 +189,12 @@ class CurrencyFormatterSettings {
     String? symbolSeparator,
   }) =>
       CurrencyFormatterSettings(
-          symbol: symbol ?? this.symbol,
-          symbolSide: symbolSide ?? this.symbolSide,
-          thousandSeparator: thousandSeparator ?? this.thousandSeparator,
-          decimalSeparator: decimalSeparator ?? this.decimalSeparator,
-          symbolSeparator: symbolSeparator ?? this.symbolSeparator);
+        symbol: symbol ?? this.symbol,
+        symbolSide: symbolSide ?? this.symbolSide,
+        thousandSeparator: thousandSeparator ?? this.thousandSeparator,
+        decimalSeparator: decimalSeparator ?? this.decimalSeparator,
+        symbolSeparator: symbolSeparator ?? this.symbolSeparator,
+      );
 
   /// Get the [CurrencyFormatterSettings] of a currency using its symbol.
   static CurrencyFormatterSettings? fromSymbol(String symbol) {
@@ -207,8 +206,8 @@ class CurrencyFormatterSettings {
   }
 
   /// Get the [CurrencyFormatterSettings] of the local currency.
-  static CurrencyFormatterSettings? get local => fromSymbol(
-      NumberFormat.simpleCurrency(locale: Platform.localeName).currencySymbol);
+  static CurrencyFormatterSettings? get local =>
+      fromSymbol(NumberFormat.simpleCurrency(locale: Platform.localeName).currencySymbol);
 
   static final CurrencyFormatterSettings usd =
       CurrencyFormatterSettings(symbol: '\$', symbolSide: SymbolSide.left);

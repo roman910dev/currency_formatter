@@ -4,7 +4,7 @@ void main() {
   CurrencyFormatterSettings euroSettings = CurrencyFormatterSettings(
     // formatter settings for euro
     symbol: '€',
-    symbolSide: SymbolSide.left,
+    symbolSide: SymbolSide.right,
     thousandSeparator: '.',
     decimalSeparator: ',',
     symbolSeparator: ' ',
@@ -13,7 +13,7 @@ void main() {
   num amount = 1910.9347;
 
   String formatted =
-      CurrencyFormatter.format(-amount, euroSettings); // 1.910,93 €
+      CurrencyFormatter.format(amount, euroSettings); // 1.910,93 €
   String compact =
       CurrencyFormatter.format(amount, euroSettings, compact: true); // 1,91K €
   String threeDecimal =
