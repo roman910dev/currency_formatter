@@ -1,14 +1,14 @@
 # currency_formatter
 
-A package to easily format money. It supports setting a custom currency symbol and format, 
+A package to easily format money. It supports setting a custom currency symbol and format,
 using some of the inbuilt ones for the main currencies or using the system one.
 
 ## Format money
 
-To set how a `double` will be formatted, create a `CurrencyFormatterSettings`:
+To set how a `double` will be formatted, create a `CurrencyFormat`:
 
 ```dart
-CurrencyFormatterSettings euroSettings = CurrencyFormatterSettings(
+CurrencyFormat euroSettings = CurrencyFormat(
   symbol: '€',
   symbolSide: SymbolSide.left,
   thousandSeparator: '.',
@@ -21,8 +21,7 @@ CurrencyFormatterSettings euroSettings = CurrencyFormatterSettings(
 `thousandSeparator` and `decimalSeparator` default to `'.'`, `','` or `','`,`'.'` automatically
 depending on `symbolSide`.
 
-
-To format a `num`,  `CurrencyFormatter.format()` is used:
+To format a `num`, `CurrencyFormatter.format()` is used:
 
 ```dart
 num amount = 1910.9347;
@@ -42,30 +41,30 @@ num parseCompact = CurrencyFormatter.parse(compact, euroSettings); // 1910.0
 num parseThreeDecimal = CurrencyFormatter.parse(threeDecimal, euroSettings); // 1910.935
 ```
 
-## Predefined CurrencyFormatterSettings
+## Predefined CurrencyFormat
 
 Predefined settings for many currencies are also included in this package.
-They are listed in the `CurrencyFormatter.majors` variable and their symbols in 
+They are listed in the `CurrencyFormatter.majors` variable and their symbols in
 `CurrencyFormatter.majorSymbols`. They can be used in both of the following ways
 which do exactly the same:
 
 ```dart
-String inUSD = CurrencyFormatter.format(amount, CurrencyFormatterSettings.usd); // $ 1,910.93
+String inUSD = CurrencyFormatter.format(amount, CurrencyFormat.usd); // $ 1,910.93
 String inRUB = CurrencyFormatter.format(amount, CurrencyFormatter.majors['rub']!); // 1.910,93 ₽
 
 String jpySymbol = CurrencyFormatter.majorSymbols['jpy']!; // ¥
 ```
 
-In Flutter, you can get the default `CurrencyFormatterSettings` according to the device
-language using `CurrencyFormatterSettings.local`:
+In Flutter, you can get the default `CurrencyFormat` according to the device
+language using `CurrencyFormat.local`:
 
 ```dart
-  String inSystemCurrency = CurrencyFormatter.format(amount, CurrencyFormatterSettings.local ?? CurrencyFormatterSettings.usd);
+  String inSystemCurrency = CurrencyFormatter.format(amount, CurrencyFormat.local ?? CurrencyFormat.usd);
 ```
 
-You can get a `CurrencyFormatterSettings` from a currency symbol (if it is in
-`CurrencyFormatter.majors`) with `CurrencyFormatterSettings.fromSymbol()`:
+You can get a `CurrencyFormat` from a currency symbol (if it is in
+`CurrencyFormatter.majors`) with `CurrencyFormat.fromSymbol()`:
 
 ```dart
-String fromSymbol = CurrencyFormatter.format(amount, CurrencyFormatterSettings.fromSymbol('£')!); // £ 1,910.35
+String fromSymbol = CurrencyFormatter.format(amount, CurrencyFormat.fromSymbol('£')!); // £ 1,910.35
 ```

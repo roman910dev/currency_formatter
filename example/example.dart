@@ -1,7 +1,7 @@
 import 'package:currency_formatter/currency_formatter.dart';
 
 void main() {
-  CurrencyFormatterSettings euroSettings = CurrencyFormatterSettings(
+  const CurrencyFormat euroSettings = CurrencyFormat(
     // formatter settings for euro
     symbol: '€',
     symbolSide: SymbolSide.right,
@@ -25,22 +25,22 @@ void main() {
   num parseThreeDecimal =
       CurrencyFormatter.parse(threeDecimal, euroSettings); // 1910.935
 
-  String inUSD = CurrencyFormatter.format(
-      amount, CurrencyFormatterSettings.usd); // $ 1,910.93
+  String inUSD =
+      CurrencyFormatter.format(amount, CurrencyFormat.usd); // $ 1,910.93
   String inRUB = CurrencyFormatter.format(
       amount, CurrencyFormatter.majors['rub']!); // 1.910,93 ₽
 
   String usdSymbol = CurrencyFormatter.majorSymbols['usd']!; // $
-  String jpySymbol = CurrencyFormatterSettings.jpy.symbol; // ¥
+  String jpySymbol = CurrencyFormat.jpy.symbol; // ¥
 
   String inSystemCurrency = CurrencyFormatter.format(
-      amount, CurrencyFormatterSettings.local ?? CurrencyFormatterSettings.usd);
+      amount, CurrencyFormat.local ?? CurrencyFormat.usd);
 
   String fromSymbol = CurrencyFormatter.format(
-      amount, CurrencyFormatterSettings.fromSymbol('£')!); // £ 1,910.35
+      amount, CurrencyFormat.fromSymbol('£')!); // £ 1,910.35
 
-  CurrencyFormatterSettings noSpaceSettings =
-      CurrencyFormatterSettings.usd.copyWith(symbolSeparator: '');
+  CurrencyFormat noSpaceSettings =
+      CurrencyFormat.usd.copyWith(symbolSeparator: '');
   String noSpace =
       CurrencyFormatter.format(amount, noSpaceSettings); // $1,910.93
 }

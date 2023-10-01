@@ -1,3 +1,15 @@
+## [2.1.0] - 2023-10-01
+
+- Removed `flutter` dependency. This package is pure Dart.
+- Removed `universal_io` dependency. It was preventing this package support for web to be properly displayed on pub.dev.
+- Increased minimum Dart version to `2.13.0`.
+- Renamed `CurrencyFormatterSettings` to `CurrencyFormatter`. The old name is still available as a deprecated class.
+- `CurrencyFormat.thousandSeparator` and `CurrencyFormat.decimalSeparator` getters are now non-nullable.
+- `CurrencyFormat` constructor is now fully `const`.
+- `CurrencyFormatter.majors` is now `const` and so are all its values.
+- Add `CurrencyFormat` equality operator. Two `CurrencyFormat`s are equal if all their properties are equal.
+- Add `CurrencyFormat.toString()`.
+
 ## [2.0.1] - 2023-05-12
 
 - Upgraded `intl` package to `^0.18.0` to enable support for Flutter 3.10.
