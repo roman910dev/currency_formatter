@@ -150,7 +150,13 @@ abstract class CurrencyFormatter {
     'ils': '₪',
     'php': '₱',
     'myr': 'RM',
-    'ron': 'L'
+    'ron': 'L',
+    'eth': 'Ξ',
+    'btc': '₿',
+    'ada': '₳',
+    'matic': 'MATIC',
+    'sol': 'SOL',
+    'dai': '◈',
   };
 }
 
@@ -306,6 +312,30 @@ class CurrencyFormat {
   /// The [CurrencyFormat] of the Romanian Leu.
   static const CurrencyFormat ron =
       CurrencyFormat(symbol: 'L', symbolSide: SymbolSide.right);
+  
+  /// The [CurrencyFormat] of Ethereum.
+  static const CurrencyFormat eth =
+      CurrencyFormat(symbol: 'Ξ', symbolSide: SymbolSide.right);
+  
+  /// The [CurrencyFormat] of Bitcoin.
+  static const CurrencyFormat btc =
+      CurrencyFormat(symbol: '₿', symbolSide: SymbolSide.left);
+  
+  /// The [CurrencyFormat] of Cardano.
+  static const CurrencyFormat ada =
+      CurrencyFormat(symbol: '₳', symbolSide: SymbolSide.left);
+  
+  /// The [CurrencyFormat] of Polygon's Matic.
+  static const CurrencyFormat matic =
+      CurrencyFormat(symbol: 'MATIC', symbolSide: SymbolSide.right);
+  
+  /// The [CurrencyFormat] of Solana.
+  static const CurrencyFormat sol =
+      CurrencyFormat(symbol: 'SOL', symbolSide: SymbolSide.right);
+  
+  /// The [CurrencyFormat] of Dai.
+  static const CurrencyFormat dai =
+      CurrencyFormat(symbol: '◈', symbolSide: SymbolSide.right);
 
   @override
   String toString() =>
