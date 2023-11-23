@@ -4,6 +4,7 @@ import 'package:test/test.dart';
 void main() {
   CurrencyFormat euroSettings = CurrencyFormat(
     // formatter settings for euro
+    code: 'eur',
     symbol: '€',
     symbolSide: SymbolSide.right,
     thousandSeparator: '.',
@@ -41,10 +42,10 @@ void main() {
   test('\$ 1,910.93', () => expect(inUSD, '\$ 1,910.93'));
 
   String inRUB = CurrencyFormatter.format(
-      amount, CurrencyFormatter.majors['rub']!); // 1.910,93 ₽
+      amount, CurrencyFormat.fromCode('rub')!); // 1.910,93 ₽
   test('1.910,93 ₽', () => expect(inRUB, '1.910,93 ₽'));
 
-  String usdSymbol = CurrencyFormatter.majorSymbols['usd']!; // $
+  String usdSymbol = CurrencyFormat.fromCode('usd')!.symbol; // $
   test('usd symbol', () => expect(usdSymbol, '\$'));
 
   String jpySymbol = CurrencyFormat.jpy.symbol; // ¥
@@ -59,4 +60,22 @@ void main() {
   String noSpace =
       CurrencyFormatter.format(amount, noSpaceSettings); // $1,910.93
   test('no space', () => expect(noSpace, '\$1,910.93'));
+
+  const CurrencyFormat khr = CurrencyFormat(
+    code: 'khr',
+    symbol: '៛',
+    symbolSide: SymbolSide.right,
+  );
+
+  const List<CurrencyFormat> myCurrencies = [
+    ...CurrencyFormatter.majorsList,
+    khr,
+  ];
+  test('custom currency', () {
+    expect(CurrencyFormat.fromSymbol('៛'), null);
+    expect(CurrencyFormat.fromSymbol('៛', myCurrencies), khr);
+  });
+
+  CurrencyFormat? customLocal = CurrencyFormat.fromLocale(null, myCurrencies);
+  test('custom local', () => expect(customLocal, CurrencyFormat.local));
 }

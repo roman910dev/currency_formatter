@@ -1,3 +1,12 @@
+## [2.2.0] - 2023-11-23
+
+- Added the `CurrencyFormatter.majorsList` list.
+- Deprecated `CurrencyFormatter.majors` and `CurrencyFormatter.symbols` in favor of `CurrencyFormatter.majorsList`.
+- Added the `code` property to `CurrencyFormat`.
+- Modified `CurrencyFormatter.fromSymbol()` to accept an optional `List<CurrencyFormat>` parameter specifying a custom list of currencies.
+- Added `CurrencyFormatter.fromCode()` to get a `CurrencyFormat` from a currency code (e.g. `usd`).
+- Added `CurrencyFormatter.fromLocale()` to get a `CurrencyFormat` from a locale.
+
 ## [2.1.0] - 2023-10-01
 
 - Removed `flutter` dependency. This package is pure Dart.

@@ -3,6 +3,7 @@ import 'package:currency_formatter/currency_formatter.dart';
 void main() {
   const CurrencyFormat euroSettings = CurrencyFormat(
     // formatter settings for euro
+    code: 'eur',
     symbol: '€',
     symbolSide: SymbolSide.right,
     thousandSeparator: '.',
@@ -28,10 +29,10 @@ void main() {
   String inUSD =
       CurrencyFormatter.format(amount, CurrencyFormat.usd); // $ 1,910.93
   String inRUB = CurrencyFormatter.format(
-      amount, CurrencyFormatter.majors['rub']!); // 1.910,93 ₽
+      amount, CurrencyFormat.fromCode('rub')!); // 1.910,93 ₽
 
-  String usdSymbol = CurrencyFormatter.majorSymbols['usd']!; // $
   String jpySymbol = CurrencyFormat.jpy.symbol; // ¥
+  String usdSymbol = CurrencyFormat.fromCode('usd')!.symbol; // $
 
   String inSystemCurrency = CurrencyFormatter.format(
       amount, CurrencyFormat.local ?? CurrencyFormat.usd);
@@ -43,4 +44,21 @@ void main() {
       CurrencyFormat.usd.copyWith(symbolSeparator: '');
   String noSpace =
       CurrencyFormatter.format(amount, noSpaceSettings); // $1,910.93
+
+  const CurrencyFormat khr = CurrencyFormat(
+    code: 'khr',
+    symbol: '៛',
+    symbolSide: SymbolSide.right,
+  );
+
+  const List<CurrencyFormat> myCurrencies = [
+    ...CurrencyFormatter.majorsList,
+    khr,
+  ];
+
+  CurrencyFormat.fromSymbol('៛'); // null
+  CurrencyFormat.fromSymbol('៛', myCurrencies); // khr
+
+  CurrencyFormat? localCurrency() =>
+      CurrencyFormat.fromSymbol(CurrencyFormat.localSymbol, myCurrencies);
 }

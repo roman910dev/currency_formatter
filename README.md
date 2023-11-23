@@ -9,6 +9,7 @@ To set how a `double` will be formatted, create a `CurrencyFormat`:
 
 ```dart
 CurrencyFormat euroSettings = CurrencyFormat(
+  code: 'eur',
   symbol: '€',
   symbolSide: SymbolSide.left,
   thousandSeparator: '.',
@@ -41,30 +42,74 @@ num parseCompact = CurrencyFormatter.parse(compact, euroSettings); // 1910.0
 num parseThreeDecimal = CurrencyFormatter.parse(threeDecimal, euroSettings); // 1910.935
 ```
 
-## Predefined CurrencyFormat
+## Predefined `CurrencyFormat`s
 
 Predefined settings for many currencies are also included in this package.
-They are listed in the `CurrencyFormatter.majors` variable and their symbols in
-`CurrencyFormatter.majorSymbols`. They can be used in both of the following ways
-which do exactly the same:
+They are listed in the `CurrencyFormatter.majorsList` list and defined as static constants in the `CurrencyFormat` class.
 
 ```dart
 String inUSD = CurrencyFormatter.format(amount, CurrencyFormat.usd); // $ 1,910.93
-String inRUB = CurrencyFormatter.format(amount, CurrencyFormatter.majors['rub']!); // 1.910,93 ₽
+String inRUB = CurrencyFormatter.format(amount, CurrencyFormatter.fromCode('rub')!); // 1.910,93 ₽
 
-String jpySymbol = CurrencyFormatter.majorSymbols['jpy']!; // ¥
+String jpySymbol = CurrencyFormatter.jpy.symbol; // ¥
 ```
+
+### Get local `CurrencyFormat`
 
 In Flutter, you can get the default `CurrencyFormat` according to the device
 language using `CurrencyFormat.local`:
 
 ```dart
-  String inSystemCurrency = CurrencyFormatter.format(amount, CurrencyFormat.local ?? CurrencyFormat.usd);
+String inSystemCurrency = CurrencyFormatter.format(amount, CurrencyFormat.local ?? CurrencyFormat.usd);
 ```
+
+If instead you want to get the `CurrencyFormat` for a specific locale, use `CurrencyFormat.fromLocale()`:
+
+```dart
+String inLocaleCurrency = CurrencyFormatter.format(amount, CurrencyFormat.fromLocale('en_US')!);
+```
+
+### Get `CurrencyFormat` from symbol or code
 
 You can get a `CurrencyFormat` from a currency symbol (if it is in
 `CurrencyFormatter.majors`) with `CurrencyFormat.fromSymbol()`:
 
 ```dart
 String fromSymbol = CurrencyFormatter.format(amount, CurrencyFormat.fromSymbol('£')!); // £ 1,910.35
+
+String fromCode = CurrencyFormatter.format(amount, CurrencyFormat.fromCode('gbp')!); // £ 1,910.35
+```
+
+## Using custom currencies
+
+Let's say you want to use the following custom currency seamlessly:
+
+```dart
+CurrencyFormat khr = CurrencyFormat(
+  symbol: '៛',
+  symbolSide: SymbolSide.right,
+);
+```
+
+You can create your own majors list:
+
+```dart
+const List<CurrencyFormat> myCurrencies = [
+  ...CurrencyFormatter.majorsList,
+  khr,
+];
+```
+
+And use it to get the currency corresponding to a symbol or code, or the local one:
+
+```dart
+CurrencyFormat.fromSymbol('៛', myCurrencies); // khr
+CurrencyFormat.fromCode('khr', myCurrencies); // khr
+
+// custom local currency
+CurrencyFormat? localCurrency() =>
+    CurrencyFormat.fromSymbol(CurrencyFormat.localSymbol, myCurrencies);
+// or
+CurrencyFormat? localCurrency() =>
+    CurrencyFormat.fromLocale(null, myCurrencies);
 ```

@@ -103,6 +103,7 @@ abstract class CurrencyFormatter {
 
   /// Map that contains the [CurrencyFormat] from major currencies.
   /// They can be accessed using their abbreviation. e.g. `majors['usd']`.
+  @Deprecated('Deprecated in favor of \'majorsList\'')
   static const Map<String, CurrencyFormat> majors = {
     'usd': CurrencyFormat.usd,
     'eur': CurrencyFormat.eur,
@@ -129,6 +130,7 @@ abstract class CurrencyFormatter {
 
   /// Map that contains the symbols from major currencies.
   /// They can be accessed using their abbreviation. e.g. `majorSymbols['usd']`.
+  @Deprecated('Deprecated in favor of \'majorsList\'')
   static const Map<String, String> majorSymbols = {
     'usd': '\$',
     'eur': '€',
@@ -152,6 +154,31 @@ abstract class CurrencyFormatter {
     'myr': 'RM',
     'ron': 'L'
   };
+
+  /// List that contains the [CurrencyFormat] from major currencies.
+  static const List<CurrencyFormat> majorsList = [
+    CurrencyFormat.usd,
+    CurrencyFormat.eur,
+    CurrencyFormat.jpy,
+    CurrencyFormat.gbp,
+    CurrencyFormat.chf,
+    CurrencyFormat.cny,
+    CurrencyFormat.sek,
+    CurrencyFormat.krw,
+    CurrencyFormat.inr,
+    CurrencyFormat.rub,
+    CurrencyFormat.zar,
+    CurrencyFormat.tryx,
+    CurrencyFormat.pln,
+    CurrencyFormat.thb,
+    CurrencyFormat.idr,
+    CurrencyFormat.huf,
+    CurrencyFormat.czk,
+    CurrencyFormat.ils,
+    CurrencyFormat.php,
+    CurrencyFormat.myr,
+    CurrencyFormat.ron
+  ];
 }
 
 @Deprecated('Use \'CurrencyFormat\' instead')
@@ -159,6 +186,9 @@ typedef CurrencyFormatterSettings = CurrencyFormat;
 
 /// This class contains the formatting settings for a currency.
 class CurrencyFormat {
+  /// Abbreviation of the currency in lowercase. e.g. 'usd'
+  final String? code;
+
   /// Symbol of the currency. e.g. '€'
   final String symbol;
 
@@ -176,6 +206,7 @@ class CurrencyFormat {
 
   const CurrencyFormat({
     required this.symbol,
+    this.code,
     this.symbolSide = SymbolSide.left,
     String? thousandSeparator,
     String? decimalSeparator,
@@ -195,6 +226,7 @@ class CurrencyFormat {
 
   /// Returns the same [CurrencyFormat] but with some changed parameters.
   CurrencyFormat copyWith({
+    String? code,
     String? symbol,
     SymbolSide? symbolSide,
     String? thousandSeparator,
@@ -202,6 +234,7 @@ class CurrencyFormat {
     String? symbolSeparator,
   }) =>
       CurrencyFormat(
+        code: code ?? this.code,
         symbol: symbol ?? this.symbol,
         symbolSide: symbolSide ?? this.symbolSide,
         thousandSeparator: thousandSeparator ?? this.thousandSeparator,
@@ -210,102 +243,137 @@ class CurrencyFormat {
       );
 
   /// Get the [CurrencyFormat] of a currency using its symbol.
-  static CurrencyFormat? fromSymbol(String symbol) {
-    for (int i = 0; i < CurrencyFormatter.majorSymbols.length; i++) {
-      if (CurrencyFormatter.majorSymbols.values.elementAt(i) == symbol) {
-        return CurrencyFormatter.majors.values.elementAt(i);
-      }
+  static CurrencyFormat? fromSymbol(
+    String symbol, [
+    List<CurrencyFormat> currencies = CurrencyFormatter.majorsList,
+  ]) {
+    if (currencies.any((c) => c.symbol == symbol)) {
+      return currencies.firstWhere((c) => c.symbol == symbol);
     }
     return null;
   }
 
+  /// Get the [CurrencyFormat] of a currency using its abbreviation.
+  static CurrencyFormat? fromCode(
+    String code, [
+    List<CurrencyFormat> currencies = CurrencyFormatter.majorsList,
+  ]) {
+    if (currencies.any((c) => c.code?.toLowerCase() == code.toLowerCase())) {
+      return currencies
+          .firstWhere((c) => c.code?.toLowerCase() == code.toLowerCase());
+    }
+    return null;
+  }
+
+  /// Get the [CurrencyFormat] of a currency using its locale.
+  ///
+  /// If [locale] is not specified, the local currency will be used.
+  ///
+  /// If [currencies] is not specified, the majors list will be used.
+  ///
+  /// ```dart
+  /// // Get the local currency with a custom currencies list.
+  /// CurrencyFormat? local = CurrencyFormat.fromLocale(null, myCurrencies);
+  /// ```
+  static CurrencyFormat? fromLocale([
+    String? locale,
+    List<CurrencyFormat> currencies = CurrencyFormatter.majorsList,
+  ]) =>
+      fromSymbol(
+        NumberFormat.simpleCurrency(locale: locale ?? localeName)
+            .currencySymbol,
+      );
+
   /// Get the [CurrencyFormat] of the local currency.
-  static CurrencyFormat? get local => fromSymbol(
-      NumberFormat.simpleCurrency(locale: localeName).currencySymbol);
+  static CurrencyFormat? get local => fromSymbol(localSymbol);
+
+  /// Get the symbol of the local currency.
+  static String get localSymbol =>
+      NumberFormat.simpleCurrency(locale: localeName).currencySymbol;
 
   /// The [CurrencyFormat] of the US Dollar.
   static const CurrencyFormat usd =
-      CurrencyFormat(symbol: '\$', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'usd', symbol: '\$', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Euro.
   static const CurrencyFormat eur =
-      CurrencyFormat(symbol: '€', symbolSide: SymbolSide.right);
+      CurrencyFormat(code: 'eur', symbol: '€', symbolSide: SymbolSide.right);
 
   /// The [CurrencyFormat] of the Japanese Yen.
   static const CurrencyFormat jpy =
-      CurrencyFormat(symbol: '¥', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'jpy', symbol: '¥', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the British Pound.
   static const CurrencyFormat gbp =
-      CurrencyFormat(symbol: '£', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'gbp', symbol: '£', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Swiss Franc.
   static const CurrencyFormat chf =
-      CurrencyFormat(symbol: 'fr', symbolSide: SymbolSide.right);
+      CurrencyFormat(code: 'chf', symbol: 'fr', symbolSide: SymbolSide.right);
 
   /// The [CurrencyFormat] of the Chinese Yuan.
   static const CurrencyFormat cny =
-      CurrencyFormat(symbol: '元', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'cny', symbol: '元', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Swedish Krona.
   static const CurrencyFormat sek =
-      CurrencyFormat(symbol: 'kr', symbolSide: SymbolSide.right);
+      CurrencyFormat(code: 'sek', symbol: 'kr', symbolSide: SymbolSide.right);
 
   /// The [CurrencyFormat] of the South Korean Won.
   static const CurrencyFormat krw =
-      CurrencyFormat(symbol: '₩', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'krw', symbol: '₩', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Indian Rupee.
   static const CurrencyFormat inr =
-      CurrencyFormat(symbol: '₹', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'inr', symbol: '₹', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Russian Ruble.
   static const CurrencyFormat rub =
-      CurrencyFormat(symbol: '₽', symbolSide: SymbolSide.right);
+      CurrencyFormat(code: 'rub', symbol: '₽', symbolSide: SymbolSide.right);
 
   /// The [CurrencyFormat] of the South African Rand.
   static const CurrencyFormat zar =
-      CurrencyFormat(symbol: 'R', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'zar', symbol: 'R', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Turkish Lira.
   static const CurrencyFormat tryx =
-      CurrencyFormat(symbol: '₺', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'tryx', symbol: '₺', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Polish Zloty.
   static const CurrencyFormat pln =
-      CurrencyFormat(symbol: 'zł', symbolSide: SymbolSide.right);
+      CurrencyFormat(code: 'pln', symbol: 'zł', symbolSide: SymbolSide.right);
 
   /// The [CurrencyFormat] of the Thai Baht.
   static const CurrencyFormat thb =
-      CurrencyFormat(symbol: '฿', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'thb', symbol: '฿', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Indonesian Rupiah.
   static const CurrencyFormat idr =
-      CurrencyFormat(symbol: 'Rp', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'idr', symbol: 'Rp', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Hungarian Forint.
   static const CurrencyFormat huf =
-      CurrencyFormat(symbol: 'Ft', symbolSide: SymbolSide.right);
+      CurrencyFormat(code: 'huf', symbol: 'Ft', symbolSide: SymbolSide.right);
 
   /// The [CurrencyFormat] of the Czech Koruna.
   static const CurrencyFormat czk =
-      CurrencyFormat(symbol: 'Kč', symbolSide: SymbolSide.right);
+      CurrencyFormat(code: 'czk', symbol: 'Kč', symbolSide: SymbolSide.right);
 
   /// The [CurrencyFormat] of the Israeli New Shekel.
   static const CurrencyFormat ils =
-      CurrencyFormat(symbol: '₪', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'ils', symbol: '₪', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Philippine Peso.
   static const CurrencyFormat php =
-      CurrencyFormat(symbol: '₱', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'php', symbol: '₱', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Malaysian Ringgit.
   static const CurrencyFormat myr =
-      CurrencyFormat(symbol: 'RM', symbolSide: SymbolSide.left);
+      CurrencyFormat(code: 'myr', symbol: 'RM', symbolSide: SymbolSide.left);
 
   /// The [CurrencyFormat] of the Romanian Leu.
   static const CurrencyFormat ron =
-      CurrencyFormat(symbol: 'L', symbolSide: SymbolSide.right);
+      CurrencyFormat(code: 'ron', symbol: 'L', symbolSide: SymbolSide.right);
 
   @override
   String toString() =>
