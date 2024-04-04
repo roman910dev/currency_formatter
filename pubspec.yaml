@@ -1,14 +1,14 @@
 name: currency_formatter
 description: A package to easily format money. It supports setting a custom currency symbol and format, using some of the inbuilt ones for the main currencies or using the system one.
-version: 2.2.0
+version: 2.2.1
 homepage: https://github.com/roman910dev/currency_formatter
 
 environment:
   sdk: ">=2.13.0 <4.0.0"
 
 dependencies:
-  intl: ^0.18.0
+  intl: ^0.19.0
 
 dev_dependencies:
-  lints: ^2.1.1
-  test: ^1.24.6
+  lints: ^3.0.0
+  test: ^1.25.0
