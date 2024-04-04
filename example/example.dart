@@ -45,6 +45,20 @@ void main() {
   String noSpace =
       CurrencyFormatter.format(amount, noSpaceSettings); // $1,910.93
 
+  int intAmount = 3;
+  String noDecimal = CurrencyFormatter.format(intAmount, euroSettings); // 3 €
+
+  String enforceDecimal = CurrencyFormatter.format(
+    intAmount,
+    euroSettings,
+    enforceDecimals: true,
+  ); // 3,00 €
+
+  CurrencyFormat noSymbolFormat =
+      euroSettings.copyWith(symbol: '', symbolSeparator: '');
+  String noSymbol =
+      CurrencyFormatter.format(amount, noSymbolFormat); // 1.910,93
+
   const CurrencyFormat khr = CurrencyFormat(
     code: 'khr',
     symbol: '៛',
