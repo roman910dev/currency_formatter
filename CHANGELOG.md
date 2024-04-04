@@ -1,3 +1,9 @@
+## [2.2.1] - 2024-04-04
+
+- Upgraded dependencies.
+- Added examples.
+- Added tests.
+
 ## [2.2.0] - 2023-11-23
 
 - Added the `CurrencyFormatter.majorsList` list.
