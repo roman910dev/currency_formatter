@@ -2,7 +2,7 @@ library currency_formatter;
 
 import 'package:intl/intl.dart';
 import './src/locale.dart'
-    if (dart.library.html) './src/locale_html.dart'
+    if (dart.library.js_interop) './src/locale_web.dart'
     if (dart.library.io) './src/locale_io.dart';
 
 abstract class CurrencyFormatter {

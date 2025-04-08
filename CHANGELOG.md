@@ -1,3 +1,7 @@
+## [2.2.3] - 2025-04-08
+
+-   Replaced `dart:html` usage with `package:web`.
+
 ## [2.2.2] - 2025-01-10
 
 -   Expanded `intl` package support range (`>=0.17.0 <0.21.0`) for better compatibility with different project versions.
