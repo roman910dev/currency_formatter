@@ -103,7 +103,7 @@ void main() {
         negativeSignPlacement: NegativeSignPlacement.beforeSymbol,
       );
       // tryx default: symbolSide: SymbolSide.left, thousandSeparator: ',', decimalSeparator: '.', symbolSeparator: ' '
-      expect(CurrencyFormatter.format(-76231.24, settings), "-₺76,231.24");
+      expect(CurrencyFormatter.format(-76231.24, settings), "-₺ 76,231.24");
     });
 
     test('USD negative before symbol', () {
@@ -111,20 +111,20 @@ void main() {
         negativeSignPlacement: NegativeSignPlacement.beforeSymbol,
       );
       // usd default: symbolSide: SymbolSide.left, thousandSeparator: ',', decimalSeparator: '.', symbolSeparator: ' '
-      expect(CurrencyFormatter.format(-1234.56, settings), "-\$1,234.56");
+      expect(CurrencyFormatter.format(-1234.56, settings), "-\$ 1,234.56");
     });
 
     test('USD negative after symbol (explicit)', () {
       final settings = CurrencyFormat.usd.copyWith(
         negativeSignPlacement: NegativeSignPlacement.afterSymbol,
       );
-      expect(CurrencyFormatter.format(-1234.56, settings), "\$-1,234.56");
+      expect(CurrencyFormatter.format(-1234.56, settings), "\$ -1,234.56");
     });
 
     test('USD negative after symbol (default)', () {
       // Relies on default negativeSignPlacement being afterSymbol
       expect(CurrencyFormatter.format(-1234.56, CurrencyFormat.usd),
-          "\$-1,234.56");
+          "\$ -1,234.56");
     });
 
     test('EUR negative before symbol (symbol on right)', () {

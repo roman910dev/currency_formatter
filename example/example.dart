@@ -70,9 +70,70 @@ void main() {
     khr,
   ];
 
-  CurrencyFormat.fromSymbol('៛'); // null
-  CurrencyFormat.fromSymbol('៛', myCurrencies); // khr
+  print('Formatted: $formatted');
+  print('Compact: $compact');
+  print('Three Decimal: $threeDecimal');
+  print('Parsed Formatted: $parseFormatted');
+  print('Parsed Compact: $parseCompact');
+  print('Parsed Three Decimal: $parseThreeDecimal');
+  print('In USD: $inUSD');
+  print('In RUB: $inRUB');
+  print('JPY Symbol: $jpySymbol');
+  print('USD Symbol: $usdSymbol');
+  print('In System Currency: $inSystemCurrency');
+  print('From Symbol (£): $fromSymbol');
+  print('No Space USD: $noSpace');
+  print('No Decimal (int amount): $noDecimal');
+  print('Enforce Decimal: $enforceDecimal');
+  print('No Symbol: $noSymbol');
+
+  CurrencyFormat? khrFromSymbol = CurrencyFormat.fromSymbol('៛');
+  print('KHR from symbol (default list): $khrFromSymbol');
+  CurrencyFormat? khrFromSymbolMyList =
+      CurrencyFormat.fromSymbol('៛', myCurrencies);
+  print('KHR from symbol (myCurrencies list): $khrFromSymbolMyList');
 
   CurrencyFormat? localCurrency() =>
       CurrencyFormat.fromSymbol(CurrencyFormat.localSymbol, myCurrencies);
+  print('Local currency from myCurrencies list: ${localCurrency()}');
+
+  // --- Custom Negative Sign Placement ---
+  print('\n// --- Custom Negative Sign Placement ---');
+  final tryNegativeBefore = CurrencyFormat.tryx.copyWith(
+    negativeSignPlacement: NegativeSignPlacement.beforeSymbol,
+  );
+  double negativeAmountTRY = -76231.24;
+  print(
+      'Turkish Lira (negative before symbol): ${CurrencyFormatter.format(negativeAmountTRY, tryNegativeBefore)}'); // Expected: -₺76,231.24
+
+  final usdNegativeBefore = CurrencyFormat.usd.copyWith(
+    negativeSignPlacement: NegativeSignPlacement.beforeSymbol,
+  );
+  double negativeAmountUSD = -1234.56;
+  print(
+      'USD (negative before symbol): ${CurrencyFormatter.format(negativeAmountUSD, usdNegativeBefore)}'); // Expected: -$1,234.56
+
+  final usdNegativeAfter = CurrencyFormat.usd.copyWith(
+    negativeSignPlacement: NegativeSignPlacement.afterSymbol,
+  );
+  print(
+      'USD (negative after symbol): ${CurrencyFormatter.format(negativeAmountUSD, usdNegativeAfter)}'); // Expected: $-1,234.56
+  
+  // Example with default negativeSignPlacement (should be afterSymbol for USD)
+  print(
+      'USD (negative default placement): ${CurrencyFormatter.format(negativeAmountUSD, CurrencyFormat.usd)}'); // Expected: $-1,234.56
+
+  // Example for EUR (symbol on the right)
+  final eurNegativeBefore = CurrencyFormat.eur.copyWith(
+    negativeSignPlacement: NegativeSignPlacement.beforeSymbol,
+  );
+  print(
+    'EUR (negative before symbol, symbol right): ${CurrencyFormatter.format(negativeAmountUSD, eurNegativeBefore)}'); // Expected: -1.234,56 €
+  
+  final eurNegativeAfter = CurrencyFormat.eur.copyWith(
+    negativeSignPlacement: NegativeSignPlacement.afterSymbol,
+  );
+   print(
+    'EUR (negative after symbol, symbol right): ${CurrencyFormatter.format(negativeAmountUSD, eurNegativeAfter)}'); // Expected: -1.234,56 €
+
 }
