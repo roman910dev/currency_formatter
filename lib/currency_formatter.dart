@@ -58,26 +58,31 @@ abstract class CurrencyFormatter {
     // Rounding for non-enforced decimals (only if not compact)
     // This must use '.' for parsing, so it's done before replacing the decimal separator.
     if (!enforceDecimals && !compact) {
-      double tempNum = double.parse(formattedNumberString); // Assumes '.' as decimal separator
+      double tempNum = double.parse(
+          formattedNumberString); // Assumes '.' as decimal separator
       if (tempNum == tempNum.round()) {
         formattedNumberString = tempNum.round().toString();
       }
     }
-    
+
     // Replace '.' with the settings-defined decimal separator
-    formattedNumberString = formattedNumberString.replaceAll('.', settings.decimalSeparator);
+    formattedNumberString =
+        formattedNumberString.replaceAll('.', settings.decimalSeparator);
 
     // Apply thousand separator if needed
     // This operates on the number string which is now purely numerical (absolute)
     // and has the correct decimal separator.
     if (showThousandSeparator) {
-      List<String> parts = formattedNumberString.split(settings.decimalSeparator);
+      List<String> parts =
+          formattedNumberString.split(settings.decimalSeparator);
       String integerPart = parts[0];
-      String decimalPart = parts.length > 1 ? settings.decimalSeparator + parts[1] : '';
-      
+      String decimalPart =
+          parts.length > 1 ? settings.decimalSeparator + parts[1] : '';
+
       String newIntegerPart = '';
       for (int i = 0; i < integerPart.length; i++) {
-        newIntegerPart = integerPart[integerPart.length - i - 1] + newIntegerPart;
+        newIntegerPart =
+            integerPart[integerPart.length - i - 1] + newIntegerPart;
         if ((i + 1) % 3 == 0 && i < integerPart.length - 1) {
           newIntegerPart = settings.thousandSeparator + newIntegerPart;
         }
@@ -89,10 +94,12 @@ abstract class CurrencyFormatter {
     String signComponent = '';
     if (isNegative) {
       if (settings.symbolSide == SymbolSide.left &&
-          settings.negativeSignPlacement == NegativeSignPlacement.beforeSymbol) {
+          settings.negativeSignPlacement ==
+              NegativeSignPlacement.beforeSymbol) {
         signComponent = '-'; // Sign will go before the symbol
       } else {
-        formattedNumberString = '-$formattedNumberString'; // Sign will go with the number
+        formattedNumberString =
+            '-$formattedNumberString'; // Sign will go with the number
       }
     }
 
