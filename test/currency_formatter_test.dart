@@ -106,6 +106,15 @@ void main() {
       expect(CurrencyFormatter.format(-76231.24, settings), "-₺ 76,231.24");
     });
 
+    test('TRY negative before symbol, no symbol separator', () {
+      final settings = CurrencyFormat.tryx.copyWith(
+        negativeSignPlacement: NegativeSignPlacement.beforeSymbol,
+        symbolSeparator: '',
+      );
+      // tryx default: symbolSide: SymbolSide.left, thousandSeparator: ',', decimalSeparator: '.', symbolSeparator: ' '
+      expect(CurrencyFormatter.format(-76231.24, settings), "-₺76,231.24");
+    });
+
     test('USD negative before symbol', () {
       final settings = CurrencyFormat.usd.copyWith(
         negativeSignPlacement: NegativeSignPlacement.beforeSymbol,
@@ -143,7 +152,7 @@ void main() {
       expect(CurrencyFormatter.format(-1234.56, settings), "-1.234,56 €");
     });
 
-     test('EUR negative after symbol (default)', () {
+    test('EUR negative after symbol (default)', () {
       // Relies on default negativeSignPlacement being afterSymbol
       expect(CurrencyFormatter.format(-1234.56, CurrencyFormat.eur),
           "-1.234,56 €");
