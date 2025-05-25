@@ -18,9 +18,9 @@ CurrencyFormat euroSettings = CurrencyFormat(
 );
 ```
 
-`symbolSide` can be set to `SymbolSide.left`, `SymbolSide.right`, or `SymbolSide.none`.
-`thousandSeparator` and `decimalSeparator` default to `'.'`, `','` or `','`,`'.'` automatically
-depending on `symbolSide`.
+-   `symbolSide` can be set to `SymbolSide.left`, `SymbolSide.right`, or `SymbolSide.none`.
+-   `thousandSeparator` and `decimalSeparator` default to `'.'`, `','` or `','`,`'.'` automatically depending on `symbolSide`.
+-   `negativeSignPlacement` can be set to `NegativeSignPlacement.beforeSymbol` or `NegativeSignPlacement.afterSymbol`, and defaults to `NegativeSignPlacement.afterSymbol`.
 
 To format a `num`, `CurrencyFormatter.format()` is used:
 

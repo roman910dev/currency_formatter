@@ -45,6 +45,13 @@ void main() {
   String noSpace =
       CurrencyFormatter.format(amount, noSpaceSettings); // $1,910.93
 
+  CurrencyFormat negativeBeforeSymbolSettings = CurrencyFormat.tryx.copyWith(
+    negativeSignPlacement: NegativeSignPlacement.beforeSymbol,
+    symbolSeparator: '',
+  );
+  String negativeBeforeSymbol = CurrencyFormatter.format(
+      amount, negativeBeforeSymbolSettings); // -₺1,910.93
+
   int intAmount = 3;
   String noDecimal = CurrencyFormatter.format(intAmount, euroSettings); // 3 €
 
@@ -58,6 +65,9 @@ void main() {
       euroSettings.copyWith(symbol: '', symbolSeparator: '');
   String noSymbol =
       CurrencyFormatter.format(amount, noSymbolFormat); // 1.910,93
+
+  // --------------------------------------------------------------------------
+  // Custom currency list
 
   const CurrencyFormat khr = CurrencyFormat(
     code: 'khr',
@@ -75,4 +85,25 @@ void main() {
 
   CurrencyFormat? localCurrency() =>
       CurrencyFormat.fromSymbol(CurrencyFormat.localSymbol, myCurrencies);
+
+  // --------------------------------------------------------------------------
+
+  print('Formatted: $formatted');
+  print('Compact: $compact');
+  print('Three Decimal: $threeDecimal');
+  print('Parsed Formatted: $parseFormatted');
+  print('Parsed Compact: $parseCompact');
+  print('Parsed Three Decimal: $parseThreeDecimal');
+  print('In USD: $inUSD');
+  print('In RUB: $inRUB');
+  print('JPY Symbol: $jpySymbol');
+  print('USD Symbol: $usdSymbol');
+  print('In System Currency: $inSystemCurrency');
+  print('From Symbol (£): $fromSymbol');
+  print('No Space USD: $noSpace');
+  print('Negative Before Symbol: $negativeBeforeSymbol');
+  print('No Decimal (int amount): $noDecimal');
+  print('Enforce Decimal: $enforceDecimal');
+  print('No Symbol: $noSymbol');
+  print('Local Currency: ${localCurrency()}');
 }
