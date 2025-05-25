@@ -18,9 +18,9 @@ CurrencyFormat euroSettings = CurrencyFormat(
 );
 ```
 
-`symbolSide` can be set to `SymbolSide.left`, `SymbolSide.right`, or `SymbolSide.none`.
-`thousandSeparator` and `decimalSeparator` default to `'.'`, `','` or `','`,`'.'` automatically
-depending on `symbolSide`.
+- `symbolSide` can be set to `SymbolSide.left`, `SymbolSide.right`, or `SymbolSide.none`.
+- `thousandSeparator` and `decimalSeparator` default to `'.'`, `','` or `','`,`'.'` automatically depending on `symbolSide`.
+- `negativeSignPlacement`: An option on `CurrencyFormat` (e.g. set via `copyWith`) that controls the placement of the negative sign when formatting negative amounts. Use `NegativeSignPlacement.beforeSymbol` to place the sign before the currency symbol (e.g., `-\$100`) when the symbol is on the left. Defaults to `NegativeSignPlacement.afterSymbol` (e.g., `\$-100`).
 
 To format a `num`, `CurrencyFormatter.format()` is used:
 

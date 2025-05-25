@@ -1,8 +1,7 @@
 ## [2.3.0] - 2025-05-25
 
 ### Added
-
--   Added `negativeSignPlacement` option to `CurrencyFormat` to control the position of the negative sign. This allows formatting like `-€123.45` or `-$123.45` when the symbol is on the left and `negativeSignPlacement` is set to `NegativeSignPlacement.beforeSymbol`. Defaults to previous behavior (e.g., `€-123.45` or `$-123.45`) if not specified or if `negativeSignPlacement` is `NegativeSignPlacement.afterSymbol`.
+- Added `negativeSignPlacement` option to `CurrencyFormat` to control the position of the negative sign. This allows formatting like `-€123.45` or `-$123.45` when the symbol is on the left and `negativeSignPlacement` is set to `NegativeSignPlacement.beforeSymbol`. Defaults to previous behavior (e.g., `€-123.45` or `$-123.45`) if not specified or if `negativeSignPlacement` is `NegativeSignPlacement.afterSymbol`.
 
 ## [2.2.3] - 2025-04-08
 
