@@ -33,49 +33,77 @@ abstract class CurrencyFormatter {
     showThousandSeparator = true,
     enforceDecimals = false,
   }) {
-    amount = double.parse('$amount');
-    late String number;
-    String letter = '';
+    double originalAmount = double.parse('$amount');
+    bool isNegative = originalAmount < 0;
+    double absAmount = originalAmount.abs();
 
+    String letter = '';
+    String formattedNumberString;
+
+    // Step 2: Perform numerical formatting on absAmount
     if (compact) {
+      double compactCalcAmount = absAmount;
       for (int i = 0; i < _letters.length; i++) {
-        if (amount.abs() >= _letters.keys.elementAt(i)) {
+        if (compactCalcAmount >= _letters.keys.elementAt(i)) {
           letter = _letters.values.elementAt(i);
-          amount /= _letters.keys.elementAt(i);
+          compactCalcAmount /= _letters.keys.elementAt(i);
           break;
         }
       }
-      number = amount.toStringAsPrecision(3);
-      number = number.replaceAll('.', settings.decimalSeparator);
+      formattedNumberString = compactCalcAmount.toStringAsPrecision(3);
     } else {
-      number = amount.toStringAsFixed(decimal);
-      if (!enforceDecimals &&
-          double.parse(number) == double.parse(number).round()) {
-        number = double.parse(number).round().toString();
-      }
-      number = number.replaceAll('.', settings.decimalSeparator);
-      if (showThousandSeparator) {
-        String oldNum = number.split(settings.decimalSeparator)[0];
-        number = number.contains(settings.decimalSeparator)
-            ? settings.decimalSeparator +
-                number.split(settings.decimalSeparator)[1]
-            : '';
-        for (int i = 0; i < oldNum.length; i++) {
-          number = oldNum[oldNum.length - i - 1] + number;
-          if ((i + 1) % 3 == 0 &&
-              i < oldNum.length - (oldNum.startsWith('-') ? 2 : 1)) {
-            number = settings.thousandSeparator + number;
-          }
-        }
+      formattedNumberString = absAmount.toStringAsFixed(decimal);
+    }
+
+    // Rounding for non-enforced decimals (only if not compact)
+    // This must use '.' for parsing, so it's done before replacing the decimal separator.
+    if (!enforceDecimals && !compact) {
+      double tempNum = double.parse(formattedNumberString); // Assumes '.' as decimal separator
+      if (tempNum == tempNum.round()) {
+        formattedNumberString = tempNum.round().toString();
       }
     }
+    
+    // Replace '.' with the settings-defined decimal separator
+    formattedNumberString = formattedNumberString.replaceAll('.', settings.decimalSeparator);
+
+    // Apply thousand separator if needed
+    // This operates on the number string which is now purely numerical (absolute)
+    // and has the correct decimal separator.
+    if (showThousandSeparator) {
+      List<String> parts = formattedNumberString.split(settings.decimalSeparator);
+      String integerPart = parts[0];
+      String decimalPart = parts.length > 1 ? settings.decimalSeparator + parts[1] : '';
+      
+      String newIntegerPart = '';
+      for (int i = 0; i < integerPart.length; i++) {
+        newIntegerPart = integerPart[integerPart.length - i - 1] + newIntegerPart;
+        if ((i + 1) % 3 == 0 && i < integerPart.length - 1) {
+          newIntegerPart = settings.thousandSeparator + newIntegerPart;
+        }
+      }
+      formattedNumberString = newIntegerPart + decimalPart;
+    }
+
+    // Step 3 & 4: Sign handling and final assembly
+    String signComponent = '';
+    if (isNegative) {
+      if (settings.symbolSide == SymbolSide.left &&
+          settings.negativeSignPlacement == NegativeSignPlacement.beforeSymbol) {
+        signComponent = '-'; // Sign will go before the symbol
+      } else {
+        formattedNumberString = '-$formattedNumberString'; // Sign will go with the number
+      }
+    }
+
+    // Step 5: Construct final string
     switch (settings.symbolSide) {
       case SymbolSide.left:
-        return '${settings.symbol}${settings.symbolSeparator}$number$letter';
+        return '$signComponent${settings.symbol}${settings.symbolSeparator}$formattedNumberString$letter';
       case SymbolSide.right:
-        return '$number$letter${settings.symbolSeparator}${settings.symbol}';
-      default:
-        return '$number$letter';
+        return '$formattedNumberString$letter${settings.symbolSeparator}${settings.symbol}';
+      default: // SymbolSide.none
+        return '$formattedNumberString$letter';
     }
   }
 
@@ -200,10 +228,22 @@ class CurrencyFormat {
 
   final String? _decimalSeparator;
 
+  final NegativeSignPlacement? _negativeSignPlacement;
+
   /// Character(s) between the number and the currency symbol. e.g. $ 9.10 (`' '`) or $9.10 (`''`).
   /// It defaults to a normal space (`' '`).
   final String symbolSeparator;
 
+  /// Creates a new [CurrencyFormat] object.
+  ///
+  /// Parameters:
+  /// - [symbol]: The currency symbol (e.g., '\$').
+  /// - [code]: The currency code (e.g., 'USD').
+  /// - [symbolSide]: Where the symbol is placed relative to the number ([SymbolSide.left] or [SymbolSide.right]). Defaults to [SymbolSide.left].
+  /// - [thousandSeparator]: The character used to separate thousands. Defaults based on [symbolSide] (',' for left, '.' for right).
+  /// - [decimalSeparator]: The character used for the decimal point. Defaults based on [symbolSide] ('.' for left, ',' for right).
+  /// - [symbolSeparator]: The string separating the symbol and the number. Defaults to ' '.
+  /// - [negativeSignPlacement]: Determines where the negative sign is placed. See [NegativeSignPlacement]. Defaults to [NegativeSignPlacement.afterSymbol].
   const CurrencyFormat({
     required this.symbol,
     this.code,
@@ -211,8 +251,23 @@ class CurrencyFormat {
     String? thousandSeparator,
     String? decimalSeparator,
     this.symbolSeparator = ' ',
+    NegativeSignPlacement? negativeSignPlacement,
   })  : _thousandSeparator = thousandSeparator,
-        _decimalSeparator = decimalSeparator;
+        _decimalSeparator = decimalSeparator,
+        _negativeSignPlacement = negativeSignPlacement;
+
+  /// Determines where the negative sign is placed relative to the currency symbol and number.
+  ///
+  /// This setting uses the [NegativeSignPlacement] enum, which has two possible values:
+  /// - [NegativeSignPlacement.beforeSymbol]: Places the negative sign before the currency symbol,
+  ///   but *only* if [symbolSide] is [SymbolSide.left]. e.g., `-\$123.45`.
+  ///   If [symbolSide] is [SymbolSide.right], the sign will be placed before the number: `-123.45 €`.
+  /// - [NegativeSignPlacement.afterSymbol]: Places the negative sign immediately before the number,
+  ///   after the currency symbol if [symbolSide] is [SymbolSide.left]. e.g., `\$-123.45` or `123.45- €` (if symbol is on right, sign is still with number).
+  ///
+  /// Defaults to [NegativeSignPlacement.afterSymbol].
+  NegativeSignPlacement get negativeSignPlacement =>
+      _negativeSignPlacement ?? NegativeSignPlacement.afterSymbol;
 
   /// Thousand separator. e.g. 1,000,000 (`','`) or 1.000.000 (`'.'`). It can be set to any desired [String].
   /// It defaults to `','` for [SymbolSide.left] and to `'.'` for [SymbolSide.right].
@@ -232,6 +287,7 @@ class CurrencyFormat {
     String? thousandSeparator,
     String? decimalSeparator,
     String? symbolSeparator,
+    NegativeSignPlacement? negativeSignPlacement,
   }) =>
       CurrencyFormat(
         code: code ?? this.code,
@@ -240,6 +296,8 @@ class CurrencyFormat {
         thousandSeparator: thousandSeparator ?? this.thousandSeparator,
         decimalSeparator: decimalSeparator ?? this.decimalSeparator,
         symbolSeparator: symbolSeparator ?? this.symbolSeparator,
+        negativeSignPlacement:
+            negativeSignPlacement ?? this.negativeSignPlacement,
       );
 
   /// Get the [CurrencyFormat] of a currency using its symbol.
@@ -386,7 +444,8 @@ class CurrencyFormat {
       other.symbolSide == symbolSide &&
       other.thousandSeparator == thousandSeparator &&
       other.decimalSeparator == decimalSeparator &&
-      other.symbolSeparator == symbolSeparator;
+      other.symbolSeparator == symbolSeparator &&
+      other.negativeSignPlacement == negativeSignPlacement;
 
   @override
   int get hashCode =>
@@ -394,8 +453,12 @@ class CurrencyFormat {
       symbolSide.hashCode ^
       thousandSeparator.hashCode ^
       decimalSeparator.hashCode ^
-      symbolSeparator.hashCode;
+      symbolSeparator.hashCode ^
+      negativeSignPlacement.hashCode;
 }
 
 /// Enumeration for the three possibilities when writing the currency symbol.
 enum SymbolSide { left, right, none }
+
+/// Enumeration for the two possibilities when placing the negative sign.
+enum NegativeSignPlacement { beforeSymbol, afterSymbol }
